@@ -8,6 +8,8 @@ let package = Package(
     .target(name: "_CSwiftSyntax"),
     .target(name: "SwiftSyntax", dependencies: ["_CSwiftSyntax"]),
     .testTarget(name: "SwiftSyntaxTest", dependencies: ["SwiftSyntax"], exclude: ["Inputs"]),
+    .target(name: "SwiftSyntaxBuilder", dependencies: ["SwiftSyntax"]),
+    .testTarget(name: "SwiftSyntaxBuilderTest", dependencies: ["SwiftSyntaxBuilder"]),
     .target(name: "lit-test-helper", dependencies: ["SwiftSyntax"])
   ]
 )
@@ -23,3 +25,5 @@ if getenv("SWIFT_SYNTAX_BUILD_SCRIPT") == nil {
 } else {
   package.products.append(.library(name: "SwiftSyntax", type: .dynamic, targets: ["SwiftSyntax"]))
 }
+
+package.products.append(.library(name: "SwiftSyntaxBuilder", targets: ["SwiftSyntaxBuilder"]))
