@@ -22,6 +22,9 @@ enum Tokens {
   /// `"var "`
   static let `var` = SyntaxFactory.makeVarKeyword().withTrailingTrivia(.spaces(1))
 
+  /// `"import "`
+  static let `import` = SyntaxFactory.makeImportKeyword().withTrailingTrivia(.spaces(1))
+
   /// `"struct "`
   static let `struct` = SyntaxFactory.makeStructKeyword().withTrailingTrivia(.spaces(1))
 
