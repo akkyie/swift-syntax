@@ -22,6 +22,9 @@ enum Tokens {
   /// `"var "`
   static let `var` = SyntaxFactory.makeVarKeyword().withTrailingTrivia(.spaces(1))
 
+  /// `"struct "`
+  static let `struct` = SyntaxFactory.makeStructKeyword().withTrailingTrivia(.spaces(1))
+
   // MARK: Punctuations and Signs
 
   /// `":"`
@@ -30,4 +33,10 @@ enum Tokens {
   /// `" = "`
   static let equal = SyntaxFactory.makeEqualToken().withLeadingTrivia(.spaces(1))
                                                    .withTrailingTrivia(.spaces(1))
+
+  /// `"{"`
+  static let leftBrace = SyntaxFactory.makeLeftBraceToken()
+
+  /// `"}"`
+  static let rightBrace = SyntaxFactory.makeRightBraceToken()
 }
