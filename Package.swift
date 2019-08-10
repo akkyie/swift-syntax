@@ -22,8 +22,8 @@ import Darwin.C
 
 if getenv("SWIFT_SYNTAX_BUILD_SCRIPT") == nil {
   package.products.append(.library(name: "SwiftSyntax", targets: ["SwiftSyntax"]))
+  package.products.append(.library(name: "SwiftSyntaxBuilder", targets: ["SwiftSyntaxBuilder"]))
 } else {
   package.products.append(.library(name: "SwiftSyntax", type: .dynamic, targets: ["SwiftSyntax"]))
+  package.products.append(.library(name: "SwiftSyntaxBuilder", type: .dynamic, targets: ["SwiftSyntaxBuilder"]))
 }
-
-package.products.append(.library(name: "SwiftSyntaxBuilder", targets: ["SwiftSyntaxBuilder"]))
