@@ -35,8 +35,8 @@ extension DeclBuildable {
 // MARK: - Function Builder
 
 @_functionBuilder
-public struct DeclListBuilder {
-  public static func buildBlock(_ builders: DeclListBuildable...) -> DeclListBuildable {
+struct DeclListBuilder {
+  static func buildBlock(_ builders: DeclListBuildable...) -> DeclListBuildable {
     DeclList(builders: builders)
   }
 }
