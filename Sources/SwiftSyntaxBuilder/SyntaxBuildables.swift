@@ -43,15 +43,8 @@ public struct SyntaxList: SyntaxListBuildable {
   let builders: [SyntaxListBuildable]
 
   public func buildSyntaxList(format: Format, leadingTrivia: Trivia) -> [Syntax] {
-    // Returns indented newlines to join syntaxes
-    func trivia(for index: Int) -> Trivia {
-      leadingTrivia + (index > builders.startIndex ? .newlines(1) : .zero)
-    }
-
-    return builders
-      .enumerated()
-      .flatMap { index, builder in
-        builder.buildSyntaxList(format: format, leadingTrivia: trivia(for: index))
+    builders.flatMap {
+      $0.buildSyntaxList(format: format, leadingTrivia: leadingTrivia)
     }
   }
 }
@@ -75,10 +68,15 @@ public struct SourceFile: SyntaxBuildable {
     let syntaxList = builder.buildSyntaxList(format: format, leadingTrivia: leadingTrivia)
 
     return SourceFileSyntax {
-      for syntax in syntaxList {
+      for (index, syntax) in syntaxList.enumerated() {
+        let leadingTrivia: Trivia =
+          index == syntaxList.startIndex
+            ? format.makeIndent()
+            : .newlines(1) + format.makeIndent()
+
         $0.addStatement(CodeBlockItemSyntax {
           $0.useItem(syntax)
-        })
+        }.withLeadingTrivia(leadingTrivia))
       }
     }
   }
