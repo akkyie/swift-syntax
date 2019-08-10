@@ -81,3 +81,39 @@ public struct SourceFile: SyntaxBuildable {
     }
   }
 }
+
+// MARK: - ForEach
+
+public struct ForEach<Item, Body> {
+  let builders: [Body]
+}
+
+extension ForEach: SyntaxListBuildable where Body: SyntaxListBuildable {
+  public init<Data>(
+    _ data: Data,
+    @SyntaxListBuilder makeBuilder: (Item) -> Body
+  ) where Data: Sequence, Data.Element == Item {
+    self.builders = data.map(makeBuilder)
+  }
+
+  public func buildSyntaxList(format: Format, leadingTrivia: Trivia) -> [Syntax] {
+    builders.flatMap {
+      $0.buildSyntaxList(format: format, leadingTrivia: leadingTrivia)
+    }
+  }
+}
+
+extension ForEach: DeclListBuildable where Body: DeclListBuildable {
+  public init<Data>(
+    _ data: Data,
+    @DeclListBuilder makeBuilder: (Item) -> Body
+  ) where Data: Sequence, Data.Element == Item {
+    self.builders = data.map(makeBuilder)
+  }
+
+  public func buildDeclList(format: Format, leadingTrivia: Trivia) -> [DeclSyntax] {
+    builders.flatMap {
+      $0.buildDeclList(format: format, leadingTrivia: leadingTrivia)
+    }
+  }
+}
