@@ -179,3 +179,51 @@ public struct Struct: DeclBuildable {
     }
   }
 }
+
+// MARK: Function
+
+public struct Func: DeclBuildable {
+  let name: String
+  let codeBlock: SyntaxListBuildable
+
+  public init(
+    _ name: String,
+    @SyntaxListBuilder buildCodeBlock: () -> SyntaxListBuildable = { SyntaxList.empty }
+  ) {
+    self.name = name
+    self.codeBlock = buildCodeBlock()
+  }
+
+  public func buildDecl(format: Format, leadingTrivia: Trivia) -> DeclSyntax {
+    let funcKeyword = Tokens.func.withLeadingTrivia(leadingTrivia + format.makeIndent())
+
+
+    let syntaxes = codeBlock.buildSyntaxList(
+      format: format.indented(),
+      leadingTrivia: .zero
+    )
+
+    let codeBlock = CodeBlockSyntax {
+      $0.useLeftBrace(Tokens.leftBrace.withTrailingTrivia(.newlines(1)))
+      $0.useRightBrace(Tokens.rightBrace.withLeadingTrivia(.newlines(1) + format.makeIndent()))
+
+      for syntax in syntaxes {
+        $0.addStatement(CodeBlockItemSyntax {
+          $0.useItem(syntax)
+        })
+      }
+    }
+
+    return FunctionDeclSyntax {
+      $0.useFuncKeyword(funcKeyword)
+      $0.useIdentifier(SyntaxFactory.makeIdentifier(name))
+      $0.useSignature(FunctionSignatureSyntax {
+        $0.useInput(ParameterClauseSyntax {
+          $0.useLeftParen(Tokens.leftParen.withLeadingTrivia(.spaces(1)))
+          $0.useRightParen(Tokens.rightParen.withTrailingTrivia(.spaces(1)))
+        })
+      })
+      $0.useBody(codeBlock)
+    }
+  }
+}
