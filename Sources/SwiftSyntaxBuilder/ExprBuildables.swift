@@ -12,6 +12,8 @@
 
 import SwiftSyntax
 
+// MARK: - Protocols
+
 public protocol ExprListBuildable: SyntaxListBuildable {
   func buildExprList(format: Format, leadingTrivia: Trivia) -> [ExprSyntax]
 }
@@ -28,4 +30,48 @@ extension ExprBuildable {
   public func buildExprList(format: Format, leadingTrivia: Trivia) -> [ExprSyntax] {
     [buildExpr(format: format, leadingTrivia: leadingTrivia)]
   }
+}
+
+// MARK: - Buildables
+
+// MARK: Integer Literal
+
+public struct IntegerLiteral: ExprBuildable {
+    let value: Int
+
+    public init(_ value: Int) {
+        self.value = value
+    }
+
+    public func buildExpr(format: Format, leadingTrivia: Trivia) -> ExprSyntax {
+        SyntaxFactory.makeIntegerLiteralExpr(
+            digits: SyntaxFactory.makeIntegerLiteral(String(value))
+        )
+    }
+}
+
+extension IntegerLiteral: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: Int) {
+        self.init(value)
+    }
+}
+
+// MARK: String Literal
+
+public struct StringLiteral: ExprBuildable {
+    let value: String
+
+    public init(_ value: String) {
+        self.value = value
+    }
+
+    public func buildExpr(format: Format, leadingTrivia: Trivia) -> ExprSyntax {
+        SyntaxFactory.makeStringLiteralExpr(value)
+    }
+}
+
+extension StringLiteral: ExpressibleByStringLiteral {
+    public init(stringLiteral value: String) {
+        self.init(value)
+    }
 }
