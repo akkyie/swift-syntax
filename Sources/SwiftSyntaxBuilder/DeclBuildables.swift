@@ -71,7 +71,7 @@ public struct Import: DeclBuildable {
   }
 
   public func buildDecl(format: Format, leadingTrivia: Trivia) -> DeclSyntax {
-    let importToken = Tokens.import.withLeadingTrivia(leadingTrivia + format.makeIndent())
+    let importToken = Tokens.import.withLeadingTrivia(leadingTrivia)
     let moduleNameToken = SyntaxFactory.makeIdentifier(moduleName)
 
     return ImportDeclSyntax {
@@ -112,8 +112,7 @@ public struct Variable<Mutability: VariableMutability>: DeclBuildable {
   }
 
   public func buildDecl(format: Format, leadingTrivia: Trivia) -> DeclSyntax {
-    let mutabilityKeyword = Mutability.token
-      .withLeadingTrivia(leadingTrivia + format.makeIndent())
+    let mutabilityKeyword = Mutability.token.withLeadingTrivia(leadingTrivia)
 
     let nameIdentifier = SyntaxFactory.makeIdentifier(name)
     let namePattern = SyntaxFactory.makeIdentifierPattern(identifier: nameIdentifier)
@@ -125,7 +124,7 @@ public struct Variable<Mutability: VariableMutability>: DeclBuildable {
     )
 
     let initClause = initializer.flatMap { builder -> InitializerClauseSyntax in
-      let expr = builder.buildExpr(format: format, leadingTrivia: leadingTrivia)
+      let expr = builder.buildExpr(format: format, leadingTrivia: .zero)
       return SyntaxFactory.makeInitializerClause(equal: Tokens.equal, value: expr)
     }
 
@@ -158,11 +157,11 @@ public struct Struct: DeclBuildable {
   }
 
   public func buildDecl(format: Format, leadingTrivia: Trivia) -> DeclSyntax {
-    let structKeyword = Tokens.struct.withLeadingTrivia(leadingTrivia + format.makeIndent())
+    let structKeyword = Tokens.struct.withLeadingTrivia(leadingTrivia)
 
     let declList = memberList.buildDeclList(
       format: format.indented(),
-      leadingTrivia: .newlines(1)
+      leadingTrivia: .zero
     )
 
     return StructDeclSyntax {
@@ -172,8 +171,12 @@ public struct Struct: DeclBuildable {
         $0.useLeftBrace(Tokens.leftBrace.withLeadingTrivia(.spaces(1)))
         $0.useRightBrace(Tokens.rightBrace.withLeadingTrivia(.newlines(1) + format.makeIndent()))
 
+        let format = format.indented()
         for decl in declList {
-          $0.addMember(SyntaxFactory.makeMemberDeclListItem(decl: decl, semicolon: nil))
+          let member = SyntaxFactory
+            .makeMemberDeclListItem(decl: decl, semicolon: nil)
+            .withLeadingTrivia(.newlines(1) + format.makeIndent())
+          $0.addMember(member)
         }
       })
     }

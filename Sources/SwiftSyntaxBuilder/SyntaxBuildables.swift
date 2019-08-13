@@ -69,15 +69,15 @@ public struct SourceFile: SyntaxBuildable {
 
     return SourceFileSyntax {
       for (index, syntax) in syntaxList.enumerated() {
-        let leadingTrivia: Trivia =
+        let trivia: Trivia =
           index == syntaxList.startIndex
             ? format.makeIndent()
             : .newlines(1) + format.makeIndent()
 
         $0.addStatement(CodeBlockItemSyntax {
           $0.useItem(syntax)
-        }.withLeadingTrivia(leadingTrivia))
+        }.withLeadingTrivia(trivia))
       }
-    }
+    }.withLeadingTrivia(leadingTrivia)
   }
 }
