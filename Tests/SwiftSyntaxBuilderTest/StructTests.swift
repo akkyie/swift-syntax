@@ -4,38 +4,76 @@ import SwiftSyntax
 @testable import SwiftSyntaxBuilder
 
 final class StructTests: XCTestCase {
-  let format = Format(indentWidth: 2).indented()
+  func testEmptyStruct() {
+    let leadingTrivia = Trivia.garbageText("␣")
 
-  func testStruct() {
-    let testCases: [UInt: (Struct, String)] = [
-      #line: (
-        Struct("TestStruct"),
-        """
-          struct TestStruct {
-          }
-        """
-      ),
+    let buildable = Struct("TestStruct")
+    let syntax = buildable.buildSyntax(format: Format(), leadingTrivia: leadingTrivia)
 
-      #line: (
-        Struct("TestStruct") {
-          Let("name", of: "String")
-        },
-        """
-          struct TestStruct {
-            let name: String
-          }
-        """
-      ),
-    ]
+    var text = ""
+    syntax.write(to: &text)
 
-    for (line, testCase) in testCases {
-      let (builder, expected) = testCase
-      let syntax = builder.buildSyntax(format: format, leadingTrivia: .zero)
-
-      var text = ""
-      syntax.write(to: &text)
-
-      XCTAssertEqual(text, expected, line: line)
+    XCTAssertEqual(text, """
+    ␣struct TestStruct {
     }
+    """)
+  }
+
+  func testStructWithMember() {
+    let leadingTrivia = Trivia.garbageText("␣")
+
+    let buildable = Struct("TestStruct") {
+      Let("member", of: "String")
+    }
+    let syntax = buildable.buildSyntax(format: Format(), leadingTrivia: leadingTrivia)
+
+    var text = ""
+    syntax.write(to: &text)
+
+    XCTAssertEqual(text, """
+    ␣struct TestStruct {
+        let member: String
+    }
+    """)
+  }
+
+  func testNestedStruct() {
+    let leadingTrivia = Trivia.garbageText("␣")
+
+    let buildable = Struct("TestStruct") {
+      Struct("NestedStruct") {
+          Let("member", of: "String")
+      }
+    }
+    let syntax = buildable.buildSyntax(format: Format(), leadingTrivia: leadingTrivia)
+
+    var text = ""
+    syntax.write(to: &text)
+
+    XCTAssertEqual(text, """
+    ␣struct TestStruct {
+        struct NestedStruct {
+            let member: String
+        }
+    }
+    """)
+  }
+
+  func testStructWithIndent() {
+    let format = Format().indented()
+
+    let buildable = Struct("TestStruct") {
+      Let("member", of: "String")
+    }
+    let syntax = buildable.buildSyntax(format: format, leadingTrivia: format.makeIndent())
+
+    var text = ""
+    syntax.write(to: &text)
+
+    XCTAssertEqual(text, """
+        struct TestStruct {
+            let member: String
+        }
+    """)
   }
 }

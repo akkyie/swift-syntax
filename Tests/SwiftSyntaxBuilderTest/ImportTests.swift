@@ -5,16 +5,16 @@ import SwiftSyntax
 
 final class ImportTests: XCTestCase {
   func testImport() {
-    let format = Format(indentWidth: 2).indented()
+    let leadingTrivia = Trivia.garbageText("␣")
 
     let testCases: [UInt: (Import, String)] = [
       #line: (Import("SwiftSyntax"),
-              "  import SwiftSyntax"),
+              "␣import SwiftSyntax"),
     ]
 
     for (line, testCase) in testCases {
       let (builder, expected) = testCase
-      let syntax = builder.buildSyntax(format: format, leadingTrivia: .zero)
+      let syntax = builder.buildSyntax(format: Format(), leadingTrivia: leadingTrivia)
 
       var text = ""
       syntax.write(to: &text)

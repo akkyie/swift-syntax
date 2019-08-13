@@ -4,9 +4,9 @@ import SwiftSyntax
 @testable import SwiftSyntaxBuilder
 
 final class SourceFileTests: XCTestCase {
-  let format = Format(indentWidth: 2).indented()
-
   func testSourceFile() {
+    let leadingTrivia = Trivia.garbageText("␣")
+
     let sourceFile = SourceFile {
       Import("SwiftSyntax")
 
@@ -15,15 +15,15 @@ final class SourceFileTests: XCTestCase {
       }
     }
 
-    let syntax = sourceFile.buildSyntax(format: format, leadingTrivia: .zero)
+    let syntax = sourceFile.buildSyntax(format: Format(), leadingTrivia: leadingTrivia)
 
     var text = ""
     syntax.write(to: &text)
     XCTAssertEqual(text, """
-      import SwiftSyntax
-      struct ExampleStruct {
+    ␣import SwiftSyntax
+    struct ExampleStruct {
         let syntax: Syntax
-      }
+    }
     """)
   }
 }
