@@ -28,7 +28,16 @@ enum Tokens {
   /// `"struct "`
   static let `struct` = SyntaxFactory.makeStructKeyword().withTrailingTrivia(.spaces(1))
 
+  /// `"some "`
+  static let `some` = SyntaxFactory.makeIdentifier("some").withTrailingTrivia(.spaces(1))
+
   // MARK: Punctuations and Signs
+
+  /// `","`
+  static let comma = SyntaxFactory.makeCommaToken().withTrailingTrivia(.spaces(1))
+
+  /// `","`
+  static let period = SyntaxFactory.makePeriodToken()
 
   /// `":"`
   static let colon = SyntaxFactory.makeColonToken().withTrailingTrivia(.spaces(1))
@@ -36,10 +45,44 @@ enum Tokens {
   /// `" = "`
   static let equal = SyntaxFactory.makeEqualToken().withLeadingTrivia(.spaces(1))
                                                    .withTrailingTrivia(.spaces(1))
+  
+  /// `" -> "`
+  static let arrow = SyntaxFactory.makeArrowToken().withLeadingTrivia(.spaces(1))
+                                                   .withTrailingTrivia(.spaces(1))
 
+  /// `"?"`
+  static let questionMark = (
+    infix: SyntaxFactory.makeInfixQuestionMarkToken().withLeadingTrivia(.spaces(1))
+                                                     .withTrailingTrivia(.spaces(1)),
+    postfix: SyntaxFactory.makePostfixQuestionMarkToken()
+  )
+
+  /// `"!"`
+  static let exclamationMark = SyntaxFactory.makeExclamationMarkToken()
+
+  static let ampersand = (
+    prefix: SyntaxFactory.makePrefixAmpersandToken(),
+    infix: SyntaxFactory.makeSpacedBinaryOperator("&").withLeadingTrivia(.spaces(1))
+                                                      .withTrailingTrivia(.spaces(1))
+  )
+
+  // MARK: Brackets
+  
   /// `"{"`
   static let leftBrace = SyntaxFactory.makeLeftBraceToken()
 
   /// `"}"`
   static let rightBrace = SyntaxFactory.makeRightBraceToken()
+
+  /// `"("`
+  static let leftParen = SyntaxFactory.makeLeftParenToken()
+
+  /// `")"`
+  static let rightParen = SyntaxFactory.makeRightParenToken()
+
+  /// `"["`
+  static let leftBrancket = SyntaxFactory.makeLeftSquareBracketToken()
+
+  /// `"]"`
+  static let rightBrancket = SyntaxFactory.makeRightSquareBracketToken()
 }
